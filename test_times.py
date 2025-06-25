@@ -46,3 +46,7 @@ def test_startend():
 def test_error():
     with raises(ValueError, match=r"Start time is after the end time."):
         time_range("2010-01-12 13:00:00", "2010-01-12 12:00:00")
+
+def test_error():
+    with raises(ValueError, match=r"Start time is after the end time."):
+        time_range("2010-01-12 11:00:00", "2010-01-12 12:00:00", 1.2)
