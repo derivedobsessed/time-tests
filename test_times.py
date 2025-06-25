@@ -1,4 +1,5 @@
-from times import time_range, compute_overlap_time
+from times import time_range, compute_overlap_time 
+from pytest import raises
 
 def test_short_large():
     large = time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00")
@@ -29,8 +30,8 @@ def text_overlap():
     assert result == expected
 
 def test_gaps():
-    time_1 = time_range("2010-01-12 10:00:00", "2010-01-12 16:00:00", 2, 120)
-    time_2 = time_range("2010-01-12 10:00:00", "2010-01-12 16:00:00", 2, 60)
+    time_1 = time_range("2010-01-12 10:00:00", "2010-01-12 16:00:00", 2, 120*60)
+    time_2 = time_range("2010-01-12 10:00:00", "2010-01-12 16:00:00", 2, 60*60)
     expected = [('2010-01-12 10:00:00', '2010-01-12 12:00:00'), ('2010-01-12 14:00:00', '2010-01-12 16:00:00')]
     result = compute_overlap_time(time_1, time_2)
     assert result == expected
@@ -41,3 +42,7 @@ def test_startend():
     expected = []
     result = compute_overlap_time(time_1, time_2)
     assert result == expected
+
+def test_error():
+    with raises(ValueError, match=r"Start time is after the end time."):
+        time_range("2010-01-12 13:00:00", "2010-01-12 12:00:00")
