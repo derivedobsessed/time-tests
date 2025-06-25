@@ -1,4 +1,6 @@
 import datetime
+import requests
+import json
 
 
 def time_range(start_time, end_time, number_of_intervals=1, gap_between_intervals_s=0):
@@ -29,7 +31,22 @@ def compute_overlap_time(range1, range2):
                 overlap_time.append((low, high))
     return overlap_time
 
+def iss_passes(url):
+    response=requests.get(url)
+    #response_text=json.loads(response.text)
+    response_text = response.json()
+    passes=response_text['passes']
+
+    times=[]
+    for p in passes:
+        start_unix, end_unix = p['startUTC'], p['endUTC']
+        start, end = datetime.datetime.fromtimestamp(start_unix), datetime.datetime.fromtimestamp(end_unix)
+        times.append([start.strftime("%Y-%m-%d %H:%M:%S"),end.strftime("%Y-%m-%d %H:%M:%S")])
+    return times
+
 if __name__ == "__main__":
-#    large = time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00")
-    short = time_range("2010-01-12 10:30:00", "2010-01-12 10:45:00", 2, 60)
-    print(compute_overlap_time(large, short))
+    # large = time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00")
+    # short = time_range("2010-01-12 10:30:00", "2010-01-12 10:45:00", 2, 60)
+    # print(compute_overlap_time(large, short))
+    print(iss_passes('https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/56/0/0/5/50&apiKey=33Q884-HFUV8K-SCS3LG-55CU'))
+    

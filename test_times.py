@@ -1,5 +1,9 @@
-from times import time_range, compute_overlap_time 
+from times import time_range, compute_overlap_time, iss_passes 
 from pytest import raises
+from unittest.mock import patch
+import requests
+import mock
+import responses
 
 def test_short_large():
     large = time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00")
@@ -50,3 +54,29 @@ def test_endstart_error():
 def test_interval_error():
     with raises(ValueError, match=r".* number of intervals is not a positive integer.*"):
         time_range("2010-01-12 11:00:00", "2010-01-12 12:00:00", 1.2)
+
+def test_mock_iss():
+    response_obj = requests.models.Response()
+    response_obj.encoding = 'ascii'
+    response_obj._content = b'{"passes": [{"startUTC": 1750904990, "endUTC": 1750905545}]}'
+    with mock.patch('requests.get', new=mock.MagicMock(return_value=response_obj)) as mock_get:
+        response = iss_passes('mock_url')
+        assert response == [['2025-06-26 03:29:50', '2025-06-26 03:39:05']]
+
+@responses.activate
+def test_mock_iss_resp():
+    responses.add(
+        responses.GET,
+        'https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/56/0/0/5/50&apiKey=33Q884-HFUV8K-SCS3LG-55CU',
+        json = {"passes": [{"startUTC": 1750904990, "endUTC": 1750905545}]},
+        status = 200
+    )
+    response = iss_passes('https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/56/0/0/5/50&apiKey=33Q884-HFUV8K-SCS3LG-55CU')
+    assert response == [['2025-06-26 03:29:50', '2025-06-26 03:39:05']]
+
+# @patch.object(requests, 'get')
+# def test_mock_iss():
+#     response_obj = requests.models.Response()
+#     response_obj.encoding = 'ascii'
+#     response_obj._content = b'{"passes": [{"startUTC": 1750904990, "endUTC": 1750905545}]}'
+    
