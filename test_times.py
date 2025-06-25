@@ -43,10 +43,10 @@ def test_startend():
     result = compute_overlap_time(time_1, time_2)
     assert result == expected
 
-def test_error():
+def test_endstart_error():
     with raises(ValueError, match=r"Start time is after the end time."):
         time_range("2010-01-12 13:00:00", "2010-01-12 12:00:00")
 
-def test_error():
-    with raises(ValueError, match=r"Start time is after the end time."):
+def test_interval_error():
+    with raises(ValueError, match=r".* number of intervals is not a positive integer.*"):
         time_range("2010-01-12 11:00:00", "2010-01-12 12:00:00", 1.2)
