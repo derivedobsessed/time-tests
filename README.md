@@ -28,13 +28,13 @@ uv add --dev pytest
 > ```
 >
 > The `time_range` function generates the observation blocks for a given start and end time, a number of intervals and a duration for the gaps.  For the first row above, this would be:
-> `"2025-06-25 00:00:00", "2025-06-25 00:11:00", 2, 60`
+> `"2025-01-01 00:00:00", "2025-01-01 00:11:00", 2, 60`
 > and for the second:
 > `"2025-01-01 00:02:00", "2025-01-01 00:12:00", 4, 120`.  
 > And the `compute_overlap_time` should provide:
 > ```python
-> [('2020-01-01 00:02:00', '2020-01-01 00:03:00'),  # first interval
->  ('2020-01-01 00:08:00', '2020-01-01 00:09:00')]  # second interval 
+> [('2025-01-01 00:02:00', '2025-01-01 00:03:00'),  # first interval
+>  ('2025-01-01 00:08:00', '2025-01-01 00:09:00')]  # second interval 
 > ```
 
 ## Step 2: Writing a unit test
